@@ -1,0 +1,45 @@
+name: Test Action
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test-action:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Run action (dry-run mode)
+        uses: ./
+        if: github.event_name == 'pull_request'
+        with:
+          path: test/docs
+          image_repository: leventehunyadi/md2conf
+          image_tag: latest
+          space: TEST
+          api_key: dummy-key-for-testing
+        continue-on-error: true
+
+      - name: Run action (live test)
+        uses: ./
+        if: github.event_name != 'pull_request' && vars.CONFLUENCE_SPACE_KEY != ''
+        with:
+          path: test/docs
+          image_repository: leventehunyadi/md2conf
+          image_tag: latest
+          domain: ${{ vars.CONFLUENCE_DOMAIN }}
+          username: ${{ vars.CONFLUENCE_USER_NAME }}
+          api_key: ${{ secrets.CONFLUENCE_API_KEY }}
+          space: ${{ vars.CONFLUENCE_SPACE_KEY }}
+          root_page_id: ${{ vars.CONFLUENCE_ROOT_PAGE_ID }}
+          title_prefix: 'Action Test - '
+          keep_hierarchy: true
+          render_mermaid: true
+          render_plantuml: true
+          diagram_format: 'svg'

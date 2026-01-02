@@ -1,0 +1,121 @@
+name: 'md2conf Github Action'
+description: 'A Github Action to publish Markdown files to Confluence.'
+author: 'codemedic'
+
+branding:
+  icon: 'upload-cloud'
+  color: 'blue'
+
+inputs:
+  path:
+    description: 'Path to the Markdown file or directory to publish.'
+    required: true
+  image_repository:
+    description: 'The Docker image repository to use.'
+    required: false
+    default: 'leventehunyadi/md2conf'
+  image_tag:
+    description: 'The tag of the Docker image to use (e.g., v1, v1.2.3). Defaults to the action''s own version.'
+    required: false
+
+  # Confluence Connection Settings
+  domain:
+    description: 'Confluence organization domain (e.g., your-domain.atlassian.net).'
+    required: false
+  api_url:
+    description: 'Confluence API URL. Use for scoped tokens. Overrides domain.'
+    required: false
+  username:
+    description: 'Confluence user name. For basic authentication.'
+    required: false
+  api_key:
+    description: 'Confluence API key or password.'
+    required: true
+  space:
+    description: 'Confluence space key for the pages.'
+    required: true
+
+  # Publishing Settings
+  root_page_id:
+    description: 'The Confluence page ID (integer) to use as the parent for published pages.'
+    required: false
+  keep_hierarchy:
+    description: 'Maintain source directory structure when exporting to Confluence.'
+    required: false
+    default: 'false'
+  title_prefix:
+    description: 'String to prepend to Confluence page titles.'
+    required: false
+  skip_title_heading:
+    description: 'If true, skips the first heading from the body if it''s used as the page title.'
+    required: false
+    default: 'true'
+  generated_by:
+    description: "Text for the 'generated-by' prompt. Set to 'none' to disable."
+    required: false
+    default: 'This page has been generated with a tool.'
+
+  # Rendering Settings
+  render_drawio:
+    description: 'Render draw.io diagrams as images. Requires draw.io utility (not included in base image).'
+    required: false
+    default: 'false'
+  render_mermaid:
+    description: 'Render Mermaid diagrams as images. Requires mermaid-cli (included in mermaid/all variants).'
+    required: false
+    default: 'true'
+  render_plantuml:
+    description: 'Render PlantUML diagrams as images. Requires PlantUML (included in plantuml/all variants).'
+    required: false
+    default: 'true'
+  render_latex:
+    description: 'Render LaTeX formulas as images. Requires matplotlib (not included in default image).'
+    required: false
+    default: 'false'
+  diagram_format:
+    description: 'Output format for rendered diagrams (png or svg).'
+    required: false
+    default: 'png'
+  alignment:
+    description: 'Alignment for block-level images and formulas (center, left, or right).'
+    required: false
+    default: 'center'
+  max_image_width:
+    description: 'Maximum display width for images in pixels (e.g., 700).'
+    required: false
+
+  # Debugging
+  debug:
+    description: 'Enable debug logging for troubleshooting (true/false).'
+    required: false
+    default: 'false'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Run md2conf
+      shell: bash
+      env:
+        INPUT_PATH: ${{ inputs.path }}
+        INPUT_IMAGE_REPOSITORY: ${{ inputs.image_repository }}
+        INPUT_IMAGE_TAG: ${{ inputs.image_tag }}
+        INPUT_DOMAIN: ${{ inputs.domain }}
+        INPUT_API_URL: ${{ inputs.api_url }}
+        INPUT_USERNAME: ${{ inputs.username }}
+        INPUT_API_KEY: ${{ inputs.api_key }}
+        INPUT_SPACE: ${{ inputs.space }}
+        INPUT_ROOT_PAGE_ID: ${{ inputs.root_page_id }}
+        INPUT_KEEP_HIERARCHY: ${{ inputs.keep_hierarchy }}
+        INPUT_TITLE_PREFIX: ${{ inputs.title_prefix }}
+        INPUT_SKIP_TITLE_HEADING: ${{ inputs.skip_title_heading }}
+        INPUT_GENERATED_BY: ${{ inputs.generated_by }}
+        INPUT_RENDER_DRAWIO: ${{ inputs.render_drawio }}
+        INPUT_RENDER_MERMAID: ${{ inputs.render_mermaid }}
+        INPUT_RENDER_PLANTUML: ${{ inputs.render_plantuml }}
+        INPUT_RENDER_LATEX: ${{ inputs.render_latex }}
+        INPUT_DIAGRAM_FORMAT: ${{ inputs.diagram_format }}
+        INPUT_ALIGNMENT: ${{ inputs.alignment }}
+        INPUT_MAX_IMAGE_WIDTH: ${{ inputs.max_image_width }}
+        DEBUG: ${{ inputs.debug == 'true' && '1' || '0' }}
+        GITHUB_WORKSPACE: ${{ github.workspace }}
+      run: ${{ github.action_path }}/scripts/run-md2conf.sh

@@ -1,0 +1,67 @@
+@startuml
+!define CLOUD_COLOR #E8F5E9
+!define SERVER_COLOR #FFF3E0
+!define DB_COLOR #E3F2FD
+
+cloud "AWS Cloud" <<CLOUD_COLOR>> {
+
+  node "Load Balancer" <<SERVER_COLOR>> {
+    [ALB]
+  }
+
+  node "Application Tier" <<SERVER_COLOR>> {
+    [Web Server 1]
+    [Web Server 2]
+    [API Server 1]
+    [API Server 2]
+  }
+
+  node "Cache Layer" <<DB_COLOR>> {
+    [Redis Primary]
+    [Redis Replica]
+  }
+
+  node "Database Tier" <<DB_COLOR>> {
+    database "PostgreSQL Primary" {
+      [Primary DB]
+    }
+    database "PostgreSQL Replica" {
+      [Replica DB]
+    }
+  }
+
+  node "Storage" <<SERVER_COLOR>> {
+    [S3 Bucket]
+  }
+}
+
+actor "Users" as users
+users --> [ALB] : HTTPS
+[ALB] --> [Web Server 1]
+[ALB] --> [Web Server 2]
+[Web Server 1] --> [API Server 1]
+[Web Server 2] --> [API Server 2]
+[API Server 1] --> [Redis Primary]
+[API Server 2] --> [Redis Primary]
+[Redis Primary] --> [Redis Replica] : Replication
+[API Server 1] --> [Primary DB]
+[API Server 2] --> [Primary DB]
+[Primary DB] --> [Replica DB] : Replication
+[API Server 1] --> [S3 Bucket] : File uploads
+[API Server 2] --> [S3 Bucket] : File uploads
+
+note right of [Redis Primary]
+  Session storage
+  Cache layer
+end note
+
+note right of [Primary DB]
+  Write operations
+  Strong consistency
+end note
+
+note right of [Replica DB]
+  Read operations
+  Eventual consistency
+end note
+@enduml

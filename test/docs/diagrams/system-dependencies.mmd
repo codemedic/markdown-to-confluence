@@ -1,0 +1,71 @@
+graph TD
+    subgraph "Frontend Dependencies"
+        React[React 18.x]
+        Redux[Redux Toolkit]
+        Router[React Router]
+        MUI[Material-UI]
+        Axios[Axios]
+        WS[Socket.io Client]
+    end
+
+    subgraph "Backend Dependencies"
+        Node[Node.js 20.x]
+        Express[Express.js]
+        Auth0[Passport.js]
+        JWT[jsonwebtoken]
+        Prisma[Prisma ORM]
+        SocketIO[Socket.io Server]
+        Bull[Bull Queue]
+    end
+
+    subgraph "Database & Cache"
+        PG[PostgreSQL 16]
+        RedisDB[Redis 7.x]
+    end
+
+    subgraph "External Services"
+        AWS[AWS S3]
+        SendGrid[SendGrid]
+        Sentry[Sentry]
+    end
+
+    subgraph "DevOps"
+        Docker[Docker]
+        GHA[GitHub Actions]
+        Nginx[Nginx]
+    end
+
+    React --> Redux
+    React --> Router
+    React --> MUI
+    React --> Axios
+    React --> WS
+
+    Axios --> Express
+    WS --> SocketIO
+
+    Express --> Node
+    Express --> Auth0
+    Express --> JWT
+    Express --> Prisma
+    Express --> SocketIO
+    Express --> Bull
+
+    Prisma --> PG
+    Bull --> RedisDB
+    SocketIO --> RedisDB
+    Auth0 --> RedisDB
+
+    Express --> AWS
+    Express --> SendGrid
+    Express --> Sentry
+
+    Node --> Docker
+    Express --> Nginx
+    GHA --> Docker
+
+    style React fill:#61DAFB,stroke:#000,color:#000
+    style Node fill:#339933,stroke:#000,color:#fff
+    style PG fill:#336791,stroke:#000,color:#fff
+    style RedisDB fill:#DC382D,stroke:#000,color:#fff
+    style Docker fill:#2496ED,stroke:#000,color:#fff

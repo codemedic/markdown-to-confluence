@@ -1,0 +1,76 @@
+@startuml
+!define API_COLOR #FFF9C4
+
+package "Authentication API" <<API_COLOR>> {
+  [POST /api/auth/register]
+  [POST /api/auth/login]
+  [POST /api/auth/logout]
+  [POST /api/auth/refresh]
+  [GET /api/auth/me]
+}
+
+package "User API" <<API_COLOR>> {
+  [GET /api/users]
+  [GET /api/users/:id]
+  [PUT /api/users/:id]
+  [DELETE /api/users/:id]
+}
+
+package "Task API" <<API_COLOR>> {
+  [GET /api/tasks]
+  [POST /api/tasks]
+  [GET /api/tasks/:id]
+  [PUT /api/tasks/:id]
+  [DELETE /api/tasks/:id]
+  [PATCH /api/tasks/:id/status]
+  [PATCH /api/tasks/:id/assign]
+}
+
+package "Comment API" <<API_COLOR>> {
+  [GET /api/tasks/:id/comments]
+  [POST /api/tasks/:id/comments]
+  [PUT /api/comments/:id]
+  [DELETE /api/comments/:id]
+}
+
+package "Team API" <<API_COLOR>> {
+  [GET /api/teams]
+  [POST /api/teams]
+  [GET /api/teams/:id]
+  [PUT /api/teams/:id]
+  [DELETE /api/teams/:id]
+  [POST /api/teams/:id/members]
+  [DELETE /api/teams/:id/members/:userId]
+}
+
+package "Tag API" <<API_COLOR>> {
+  [GET /api/tags]
+  [POST /api/tags]
+  [GET /api/tags/:id]
+  [PUT /api/tags/:id]
+  [DELETE /api/tags/:id]
+}
+
+[POST /api/auth/register] ..> [GET /api/auth/me] : After registration
+[POST /api/auth/login] ..> [GET /api/auth/me] : After login
+
+[GET /api/users] ..> [GET /api/users/:id] : List to detail
+[GET /api/tasks] ..> [GET /api/tasks/:id] : List to detail
+[GET /api/tasks/:id] ..> [GET /api/tasks/:id/comments] : View comments
+[POST /api/tasks] ..> [PATCH /api/tasks/:id/assign] : Assign after create
+[GET /api/teams] ..> [GET /api/teams/:id] : List to detail
+[GET /api/teams/:id] ..> [POST /api/teams/:id/members] : Add members
+
+note right of [GET /api/tasks]
+  Supports filtering:
+  - status
+  - priority
+  - assignee
+  - due date
+end note
+
+note right of [POST /api/teams/:id/members]
+  Requires team admin
+  or owner role
+end note
+@enduml

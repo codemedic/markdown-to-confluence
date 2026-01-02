@@ -1,0 +1,79 @@
+graph LR
+    subgraph "Q1 2024 - MVP"
+        Auth[Authentication]
+        Tasks[Task Management]
+        Users[User Profiles]
+    end
+
+    subgraph "Q2 2024 - Collaboration"
+        Teams[Team Support]
+        Comments[Task Comments]
+        Notif[Notifications]
+        Realtime[Real-time Updates]
+    end
+
+    subgraph "Q3 2024 - Advanced"
+        Search[Search & Filter]
+        Files[File Attachments]
+        Tags[Tag System]
+        Reports[Analytics & Reports]
+    end
+
+    subgraph "Q4 2024 - Enterprise"
+        SSO[SSO Integration]
+        Audit[Audit Logging]
+        API[Public API]
+        Mobile[Mobile Apps]
+    end
+
+    subgraph "2025 - Scale"
+        AI[AI Suggestions]
+        Integ[Third-party Integrations]
+        Workflows[Custom Workflows]
+        Webhooks[Webhook Support]
+    end
+
+    Auth --> Tasks
+    Auth --> Users
+    Tasks --> Teams
+    Users --> Teams
+    Teams --> Comments
+    Teams --> Notif
+    Comments --> Realtime
+    Notif --> Realtime
+
+    Tasks --> Search
+    Comments --> Search
+    Tasks --> Files
+    Tasks --> Tags
+    Teams --> Reports
+
+    Auth --> SSO
+    Users --> Audit
+    Tasks --> API
+    Realtime --> Mobile
+
+    Reports --> AI
+    API --> Integ
+    Teams --> Workflows
+    API --> Webhooks
+
+    style Auth fill:#4CAF50
+    style Tasks fill:#4CAF50
+    style Users fill:#4CAF50
+    style Teams fill:#2196F3
+    style Comments fill:#2196F3
+    style Notif fill:#2196F3
+    style Realtime fill:#2196F3
+    style Search fill:#FF9800
+    style Files fill:#FF9800
+    style Tags fill:#FF9800
+    style Reports fill:#FF9800
+    style SSO fill:#9C27B0
+    style Audit fill:#9C27B0
+    style API fill:#9C27B0
+    style Mobile fill:#9C27B0
+    style AI fill:#F44336
+    style Integ fill:#F44336
+    style Workflows fill:#F44336
+    style Webhooks fill:#F44336

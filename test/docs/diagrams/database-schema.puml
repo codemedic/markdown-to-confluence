@@ -1,0 +1,98 @@
+@startuml
+!define TABLE_COLOR #BBDEFB
+
+entity "users" <<TABLE_COLOR>> {
+  * id : UUID <<PK>>
+  --
+  * email : VARCHAR(255) <<UNIQUE>>
+  * password_hash : VARCHAR(255)
+  * name : VARCHAR(100)
+  * role : ENUM(admin, member, viewer)
+  * created_at : TIMESTAMP
+  * updated_at : TIMESTAMP
+  * last_login : TIMESTAMP
+}
+
+entity "tasks" <<TABLE_COLOR>> {
+  * id : UUID <<PK>>
+  --
+  * title : VARCHAR(200)
+  description : TEXT
+  * priority : ENUM(high, medium, low)
+  * status : ENUM(todo, in_progress, done)
+  due_date : TIMESTAMP
+  * creator_id : UUID <<FK>>
+  assignee_id : UUID <<FK>>
+  * created_at : TIMESTAMP
+  * updated_at : TIMESTAMP
+  completed_at : TIMESTAMP
+}
+
+entity "comments" <<TABLE_COLOR>> {
+  * id : UUID <<PK>>
+  --
+  * task_id : UUID <<FK>>
+  * author_id : UUID <<FK>>
+  * content : TEXT
+  * created_at : TIMESTAMP
+  * updated_at : TIMESTAMP
+}
+
+entity "task_tags" <<TABLE_COLOR>> {
+  * id : UUID <<PK>>
+  --
+  * task_id : UUID <<FK>>
+  * tag_id : UUID <<FK>>
+  * created_at : TIMESTAMP
+}
+
+entity "tags" <<TABLE_COLOR>> {
+  * id : UUID <<PK>>
+  --
+  * name : VARCHAR(50) <<UNIQUE>>
+  * color : VARCHAR(7)
+  * created_at : TIMESTAMP
+}
+
+entity "team_members" <<TABLE_COLOR>> {
+  * team_id : UUID <<FK, PK>>
+  * user_id : UUID <<FK, PK>>
+  --
+  * role : ENUM(owner, admin, member)
+  * joined_at : TIMESTAMP
+}
+
+entity "teams" <<TABLE_COLOR>> {
+  * id : UUID <<PK>>
+  --
+  * name : VARCHAR(100)
+  * description : TEXT
+  * created_at : TIMESTAMP
+  * updated_at : TIMESTAMP
+}
+
+' Relationships
+users ||--o{ tasks : creates
+users ||--o{ tasks : assigned_to
+users ||--o{ comments : writes
+tasks ||--o{ comments : has
+tasks ||--o{ task_tags : tagged_with
+tags ||--o{ task_tags : used_in
+users ||--o{ team_members : member_of
+teams ||--o{ team_members : has
+
+note right of users
+  Authentication and
+  user management
+end note
+
+note right of tasks
+  Core task entity
+  with assignments
+end note
+
+note bottom of team_members
+  Junction table for
+  many-to-many relationship
+end note
+@enduml
