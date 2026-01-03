@@ -1,6 +1,6 @@
-# md2conf GitHub Action
+# Markdown to Confluence GitHub Action
 
-Publish Markdown documentation to Confluence from your GitHub Actions workflows.
+Publish Markdown files to Confluence with support for diagrams and formatting.
 
 ## Quick Start
 
