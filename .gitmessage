@@ -1,0 +1,19 @@
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+
+# --- COMMIT HELP ---
+# Type should be one of the following:
+# feat:     A new feature
+# fix:      A bug fix
+# feat!:    A breaking change
+# fix!:     A breaking change
+# chore:    Maintenance, dependency updates, image updates
+# docs:     Documentation only changes
+# style:    Changes that do not affect the meaning of the code
+# refactor: A code change that neither fixes a bug nor adds a feature
+# test:     Adding missing tests or correcting existing tests
+# --------------------
+# Remember to keep the description short and use the imperative mood.

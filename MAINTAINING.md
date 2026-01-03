@@ -149,7 +149,7 @@ This project follows [Semantic Versioning](https://semver.org/).
 
 **Conventional Commits**:
 
-Maintainers are encouraged to use [Conventional Commits](https://www.conventionalcommits.org/) to clearly communicate the nature of changes:
+Maintainers are encouraged to use [Conventional Commits](https://www.conventionalcommits.org/) to clearly communicate the nature of changes. Refer to [COMMIT_CONVENTIONS.md](COMMIT_CONVENTIONS.md) for a full list of types and examples.
 
 - `fix:` for patches.
 - `feat:` for minor releases.
