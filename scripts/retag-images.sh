@@ -1,8 +1,18 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Script to re-tag and push Docker images from a forked repository.
-# Useful for testing builds with different version tags.
+## Script to re-tag and push Docker images from a forked repository.
+## Useful for testing builds with different version tags.
+##
+## Usage:
+##   ./retag-images.sh [options] <old-prefix-hash> <new-version>
+##
+## Options:
+##   -h, --help    Show this help message
+##   -d, --debug   Enable debug logging
+##
+## Example:
+##   ./retag-images.sh cd4d8cf 1.2.3
 
 # Source shared functions
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)" || exit 1
@@ -13,53 +23,27 @@ source "${SCRIPT_DIR}/functions.sh"
 # Constants
 readonly REPO="codemedic/md2conf"
 
-function usage() {
-    echo "Usage: $0 <old-prefix-hash> <new-version>"
-    echo "Example: $0 cd4d8cf 1.2.3"
-    exit 1
-}
-
-# Check if arguments are provided
-if [[ $# -lt 2 ]]; then
-    usage
-fi
-
-readonly OLD_PREFIX="$1"
-readonly NEW_VERSION="$2"
-
-function validate_dependencies() {
-    if ! command -v jq &> /dev/null; then
-        log_error "jq is required but not installed."
-        exit 1
-    fi
-    if ! command -v curl &> /dev/null; then
-        log_error "curl is required but not installed."
-        exit 1
-    fi
-    if ! command -v docker &> /dev/null; then
-        log_error "docker is required but not installed."
-        exit 1
-    fi
-}
-
 function retag_images() {
-    log_info "Fetching tags for ${REPO} matching '${OLD_PREFIX}*'..."
+    local old_prefix="$1"
+    local new_version="$2"
+
+    log_info "Fetching tags for ${REPO} matching '${old_prefix}*'..."
 
     # Fetch tags and filter locally
     # page_size=100 ensures we get up to 100 tags in one call
     local tags
     tags=$(curl -s "https://hub.docker.com/v2/repositories/${REPO}/tags/?page_size=100" | \
-        jq -r '.results[].name' | grep "^${OLD_PREFIX}" || true)
+        jq -r '.results[].name' | grep "^${old_prefix}" || true)
 
     if [[ -z "${tags}" ]]; then
-        log_error "No tags found starting with: ${OLD_PREFIX}"
+        log_error "No tags found starting with: ${old_prefix}"
         exit 1
     fi
 
     # Iterate, re-tag, and push
     for tag in ${tags}; do
-        # Replace the OLD_PREFIX with NEW_VERSION at the start of the string
-        local new_tag="${tag/${OLD_PREFIX}/${NEW_VERSION}}"
+        # Replace the old_prefix with new_version at the start of the string
+        local new_tag="${tag/${old_prefix}/${new_version}}"
         
         echo "---------------------------------------------------"
         log_info "Processing: ${tag} -> ${new_tag}"
@@ -86,5 +70,49 @@ function retag_images() {
 }
 
 # Main execution
-validate_dependencies
-retag_images
+main() {
+    local old_prefix=""
+    local new_version=""
+
+    # Argument parsing loop
+    while [[ "$#" -gt 0 ]]; do
+        case "$1" in
+            -d|--debug)
+                export DEBUG=1
+                ;;
+            -h|--help)
+                usage
+                exit 0
+                ;;
+            -*)
+                echo "Unknown option: $1" >&2
+                usage
+                exit 1
+                ;;
+            *)
+                if [[ -z "$old_prefix" ]]; then
+                    old_prefix="$1"
+                elif [[ -z "$new_version" ]]; then
+                    new_version="$1"
+                else
+                    echo "Too many arguments: $1" >&2
+                    usage
+                    exit 1
+                fi
+                ;;
+        esac
+        shift
+    done
+
+    if [[ -z "$old_prefix" || -z "$new_version" ]]; then
+        usage
+        exit 1
+    fi
+
+    validate_dependencies
+    retag_images "$old_prefix" "$new_version"
+}
+
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    main "$@"
+fi

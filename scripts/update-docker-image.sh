@@ -1,9 +1,37 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Docker Image Update Automation
-# Checks upstream Docker Hub for new image versions and updates image-config.sh
-# with version tags and SHA256 digests.
+## Docker Image Update Automation
+##
+## Checks upstream Docker Hub for new image versions and updates image-config.sh
+## with version tags and SHA256 digests.
+##
+## Usage:
+##   ./update-docker-image.sh [options]
+##
+## Options:
+##   --check           Check for updates without modifying files
+##   --alternative     Update image-config-alternative.sh instead of image-config.sh
+##   --major <v>       Filter by major version (e.g., 1). Defaults to current major.
+##   --version <tag>   Use specific version tag (default: auto-detect latest)
+##   -d, --debug       Enable debug logging
+##   -h, --help        Show this help message
+##
+## Examples:
+##   # Check for latest version in current major
+##   ./update-docker-image.sh --check
+##
+##   # Update to latest version in current major
+##   ./update-docker-image.sh
+##
+##   # Update alternative config
+##   ./update-docker-image.sh --alternative
+##
+##   # Upgrade to a new major version
+##   ./update-docker-image.sh --major 2
+##
+##   # Update to specific version
+##   ./update-docker-image.sh --version 0.5.3
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)" || exit 1
 readonly SCRIPT_DIR
@@ -133,39 +161,17 @@ main() {
                 version="$2"
                 shift 2
                 ;;
-            --help)
-                cat <<EOF
-Usage: $0 [OPTIONS]
-
-Update Docker image references with SHA256 digests.
-
-Options:
-  --check           Check for updates without modifying files
-  --alternative     Update image-config-alternative.sh instead of image-config.sh
-  --major <v>       Filter by major version (e.g., 1). Defaults to current major.
-  --version <tag>   Use specific version tag (default: auto-detect latest)
-  --help            Show this help message
-
-Examples:
-  # Check for latest version in current major
-  $0 --check
-
-  # Update to latest version in current major
-  $0
-
-  # Update alternative config
-  $0 --alternative
-
-  # Upgrade to a new major version
-  $0 --major 2
-
-  # Update to specific version
-  $0 --version 0.5.3
-EOF
+            -d|--debug)
+                export DEBUG=1
+                shift
+                ;;
+            -h|--help)
+                usage
                 exit 0
                 ;;
             *)
-                log_error "Unknown option: $1"
+                echo "Unknown option: $1" >&2
+                usage
                 exit 1
                 ;;
         esac

@@ -1,13 +1,25 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# md2conf Docker Execution Script
-# Handles execution of md2conf via Docker with proper argument building,
-# path handling, and security measures.
+## md2conf Docker Execution Script
+##
+## Handles execution of md2conf via Docker with proper argument building,
+## path handling, and security measures.
+##
+## Usage:
+##   ./run-md2conf.sh [options]
+##
+## Options:
+##   -h, --help    Show this help message
+##   -d, --debug   Enable debug logging
 
 # Constants
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)" || exit 1
 readonly SCRIPT_DIR
+
+# Source shared functions
+# shellcheck source=scripts/functions.sh
+source "${SCRIPT_DIR}/functions.sh"
 
 # Determine configuration file
 if [[ "${INPUT_USE_EXPERIMENTAL_FEATURES:-false}" == "true" ]]; then
@@ -16,10 +28,6 @@ else
     CONFIG_FILE="${SCRIPT_DIR}/image-config.sh"
 fi
 readonly CONFIG_FILE
-
-# Source shared functions
-# shellcheck source=scripts/functions.sh
-source "${SCRIPT_DIR}/functions.sh"
 
 # Global variables
 ARGS=()
@@ -276,6 +284,25 @@ function execute_md2conf() {
 
 # Main execution
 function main() {
+    # Argument parsing loop
+    while [[ "$#" -gt 0 ]]; do
+        case "$1" in
+            -d|--debug)
+                export DEBUG=1
+                ;;
+            -h|--help)
+                usage
+                exit 0
+                ;;
+            *)
+                echo "Unknown option: $1" >&2
+                usage
+                exit 1
+                ;;
+        esac
+        shift
+    done
+
     debug_log "Starting md2conf execution script"
 
     # Validate inputs
@@ -305,5 +332,5 @@ function main() {
 
 # Run main function only if script is executed directly (not sourced)
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    main
+    main "$@"
 fi

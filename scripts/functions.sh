@@ -26,3 +26,10 @@ function debug_log() {
         log_info "[DEBUG] $*"
     fi
 }
+
+# Function to extract and display lines starting with '##' from the calling script
+function usage() {
+    # grep: finds lines starting with ##
+    # sed: removes the leading ## and optional space
+    grep '^##' "$0" | sed 's/^##\s\?//'
+}
