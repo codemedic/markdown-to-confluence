@@ -194,6 +194,11 @@ git commit -m "chore: update to md2conf v0.5.3"
 # 5. Tag and push
 git tag v1.0.1
 git push origin main --tags
+
+# 6. (Optional) Sync major version tag locally
+git fetch --tags --force
+# The tag-alias workflow updates major version tags (e.g., v1) on the remote.
+# Use this to sync your local tags with the remote state.
 ```
 
 ### Minor Release (New Feature)
@@ -215,6 +220,9 @@ git commit -am "feat: add support for custom CSS"
 # 4. Tag and push
 git tag v1.1.0
 git push origin main --tags
+
+# 5. (Optional) Sync major version tag locally
+git fetch --tags --force
 ```
 
 ### Major Release (Breaking Changes)
@@ -240,6 +248,9 @@ After:
 # 5. Tag major version
 git tag v2.0.0
 git push origin main --tags
+
+# 6. (Optional) Sync major version tag locally
+git fetch --tags --force
 ```
 
 ## Testing
