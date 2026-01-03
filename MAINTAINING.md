@@ -77,7 +77,7 @@ The script updates `scripts/image-config.sh` (or `scripts/image-config-alternati
 
 ### Alternative Configuration
 
-For testing fork builds or custom image sets, you can use `scripts/image-config-alternative.sh`. This file is ignored by default unless `alternative_config_enabled` is set to `true` in the action inputs.
+For testing fork builds or custom image sets, you can use `scripts/image-config-alternative.sh`. This file is ignored by default unless `use_experimental_features` is set to `true` in the action inputs.
 
 To update the alternative configuration:
 
@@ -345,7 +345,7 @@ Update sample content when adding new features or fixing bugs.
 
 - Ensure `scripts/image-config.sh` exists
 - Run `./scripts/update-docker-image.sh` to generate
-- Check if `alternative_config_enabled` is set correctly
+- Check if `use_experimental_features` is set correctly
 
 #### Error: Failed to pull image
 

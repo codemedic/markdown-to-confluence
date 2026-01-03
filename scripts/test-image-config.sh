@@ -41,7 +41,7 @@ function assert_equals() {
 
 # Test helper to reset state between tests
 function setup_test() {
-    unset INPUT_IMAGE_REPOSITORY INPUT_IMAGE_TAG INPUT_ALTERNATIVE_CONFIG_ENABLED
+    unset INPUT_IMAGE_REPOSITORY INPUT_IMAGE_TAG INPUT_USE_EXPERIMENTAL_FEATURES
     IMAGE_TO_USE=""
 }
 
@@ -120,10 +120,10 @@ function test_both_repo_and_tag_provided() {
 function test_alternative_config_loads_correctly() {
     setup_test
 
-    INPUT_ALTERNATIVE_CONFIG_ENABLED="true"
+    INPUT_USE_EXPERIMENTAL_FEATURES="true"
 
     # Manually set CONFIG_FILE as load_config does
-    if [[ "${INPUT_ALTERNATIVE_CONFIG_ENABLED:-false}" == "true" ]]; then
+    if [[ "${INPUT_USE_EXPERIMENTAL_FEATURES:-false}" == "true" ]]; then
         local test_config_file="${SCRIPT_DIR}/image-config-alternative.sh"
     else
         local test_config_file="${SCRIPT_DIR}/image-config.sh"

@@ -10,7 +10,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)" || exit 1
 readonly SCRIPT_DIR
 
 # Determine configuration file
-if [[ "${INPUT_ALTERNATIVE_CONFIG_ENABLED:-false}" == "true" ]]; then
+if [[ "${INPUT_USE_EXPERIMENTAL_FEATURES:-false}" == "true" ]]; then
     CONFIG_FILE="${SCRIPT_DIR}/image-config-alternative.sh"
 else
     CONFIG_FILE="${SCRIPT_DIR}/image-config.sh"

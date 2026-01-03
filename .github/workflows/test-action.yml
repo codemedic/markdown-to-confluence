@@ -15,7 +15,7 @@ on:
       image_tag:
         description: 'Docker image tag to test (leave empty for pinned version)'
         required: false
-      alternative_config_enabled:
+      use_experimental_features:
         description: 'Use alternative image configuration'
         type: boolean
         default: false
@@ -59,7 +59,7 @@ jobs:
           path: test/docs
           image_repository: ${{ github.event.inputs.image_repository }}
           image_tag: ${{ github.event.inputs.image_tag }}
-          alternative_config_enabled: ${{ github.event.inputs.alternative_config_enabled }}
+          use_experimental_features: ${{ github.event.inputs.use_experimental_features }}
           domain: ${{ vars.CONFLUENCE_DOMAIN }}
           username: ${{ vars.CONFLUENCE_USER_NAME }}
           api_key: ${{ secrets.CONFLUENCE_API_KEY }}

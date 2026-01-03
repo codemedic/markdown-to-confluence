@@ -88,8 +88,8 @@ inputs:
     description: 'Enable debug logging for troubleshooting (true/false).'
     required: false
     default: 'false'
-  alternative_config_enabled:
-    description: 'If true, use image-config-alternative.sh instead of image-config.sh.'
+  use_experimental_features:
+    description: 'Enable experimental features and image configurations.'
     required: false
     default: 'false'
 
@@ -102,7 +102,7 @@ runs:
         INPUT_PATH: ${{ inputs.path }}
         INPUT_IMAGE_REPOSITORY: ${{ inputs.image_repository }}
         INPUT_IMAGE_TAG: ${{ inputs.image_tag }}
-        INPUT_ALTERNATIVE_CONFIG_ENABLED: ${{ inputs.alternative_config_enabled }}
+        INPUT_USE_EXPERIMENTAL_FEATURES: ${{ inputs.use_experimental_features }}
         INPUT_DOMAIN: ${{ inputs.domain }}
         INPUT_API_URL: ${{ inputs.api_url }}
         INPUT_USERNAME: ${{ inputs.username }}
