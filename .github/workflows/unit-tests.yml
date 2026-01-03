@@ -1,0 +1,71 @@
+name: Unit Tests
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  unit-tests:
+    name: Run Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Make test scripts executable
+        run: chmod +x scripts/test-*.sh
+
+      - name: Run all test scripts
+        run: |
+          set -e
+
+          echo "Discovering test scripts..."
+          test_scripts=$(find scripts -name 'test-*.sh' -type f | sort)
+
+          if [ -z "$test_scripts" ]; then
+            echo "No test scripts found"
+            exit 1
+          fi
+
+          echo "Found test scripts:"
+          echo "$test_scripts"
+          echo ""
+
+          failed=0
+          passed=0
+
+          for script in $test_scripts; do
+            echo "::group::Running $script"
+            if "$script"; then
+              echo "✓ $script passed"
+              passed=$((passed + 1))
+            else
+              echo "✗ $script failed"
+              failed=$((failed + 1))
+            fi
+            echo "::endgroup::"
+            echo ""
+          done
+
+          echo "================================================"
+          echo "Test Summary:"
+          echo "  Passed: $passed"
+          echo "  Failed: $failed"
+          echo "================================================"
+
+          if [ $failed -gt 0 ]; then
+            exit 1
+          fi
+
+      - name: Report test results
+        if: always()
+        run: |
+          if [ $? -eq 0 ]; then
+            echo "All tests passed!"
+          else
+            echo "Some tests failed. Please check the logs above."
+          fi

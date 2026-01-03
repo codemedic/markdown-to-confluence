@@ -13,9 +13,8 @@ inputs:
   image_repository:
     description: 'The Docker image repository to use.'
     required: false
-    default: 'leventehunyadi/md2conf'
   image_tag:
-    description: 'The tag of the Docker image to use (e.g., v1, v1.2.3). Defaults to the action''s own version.'
+    description: 'The tag of the Docker image to use (e.g., 1, 1.2.3). Defaults to the action''s own version.'
     required: false
 
   # Confluence Connection Settings
@@ -89,6 +88,10 @@ inputs:
     description: 'Enable debug logging for troubleshooting (true/false).'
     required: false
     default: 'false'
+  alternative_config_enabled:
+    description: 'If true, use image-config-alternative.sh instead of image-config.sh.'
+    required: false
+    default: 'false'
 
 runs:
   using: "composite"
@@ -99,6 +102,7 @@ runs:
         INPUT_PATH: ${{ inputs.path }}
         INPUT_IMAGE_REPOSITORY: ${{ inputs.image_repository }}
         INPUT_IMAGE_TAG: ${{ inputs.image_tag }}
+        INPUT_ALTERNATIVE_CONFIG_ENABLED: ${{ inputs.alternative_config_enabled }}
         INPUT_DOMAIN: ${{ inputs.domain }}
         INPUT_API_URL: ${{ inputs.api_url }}
         INPUT_USERNAME: ${{ inputs.username }}

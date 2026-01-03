@@ -71,8 +71,10 @@ jobs:
 
 | Input | Description | Default |
 |-------|-------------|---------|
-| `image_repository` | Docker image repository to use | `leventehunyadi/md2conf` |
-| `image_tag` | Docker image tag | Action version |
+| `image_repository` | Docker image repository to use | From `image-config.sh` |
+| `image_tag` | Docker image tag | From `image-config.sh` |
+
+**Note:** The action uses SHA-pinned images from the configuration file by default. You can override these with custom values if needed.
 
 ### Debugging
 
@@ -156,12 +158,14 @@ Enable debug logging for troubleshooting:
 
 Available image variants for the `image_tag` input:
 
-| Tag | Description | Size |
-|-----|-------------|------|
-| `latest` | Full image with Mermaid and PlantUML | ~1.8GB |
-| `latest-minimal` | No diagram rendering | ~87MB |
-| `latest-mermaid` | Mermaid support only | ~1.6GB |
-| `latest-plantuml` | PlantUML support only | ~334MB |
+| Tag | Description |
+|-----|-------------|
+| `{version}` | Full image with Mermaid and PlantUML |
+| `{version}-minimal` | No diagram rendering |
+| `{version}-mermaid` | Mermaid support only |
+| `{version}-plantuml` | PlantUML support only |
+
+Where `{version}` is a specific version (e.g., `1.2.3`) or `latest`.
 
 ## About
 
@@ -170,6 +174,7 @@ This action provides a GitHub Actions interface for the [md2conf](https://github
 ## For Maintainers
 
 See [MAINTAINING.md](MAINTAINING.md) for information about:
+
 - Updating Docker image references
 - Release process
 - Testing procedures

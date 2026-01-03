@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -euo pipefail
 
 # md2conf Docker Execution Script
@@ -8,7 +8,14 @@ set -euo pipefail
 # Constants
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)" || exit 1
 readonly SCRIPT_DIR
-readonly CONFIG_FILE="${SCRIPT_DIR}/image-config.sh"
+
+# Determine configuration file
+if [[ "${INPUT_ALTERNATIVE_CONFIG_ENABLED:-false}" == "true" ]]; then
+    CONFIG_FILE="${SCRIPT_DIR}/image-config-alternative.sh"
+else
+    CONFIG_FILE="${SCRIPT_DIR}/image-config.sh"
+fi
+readonly CONFIG_FILE
 
 # Source shared functions
 # shellcheck source=scripts/functions.sh
@@ -156,25 +163,28 @@ function build_args() {
 function determine_image() {
     debug_log "Determining Docker image to use"
 
-    # Priority: user custom > user tag override > default config
-    if [[ -n "${INPUT_IMAGE_REPOSITORY:-}" && "${INPUT_IMAGE_REPOSITORY}" != "${DEFAULT_IMAGE_REPOSITORY}" ]]; then
-        # User specified a custom repository
-        local image_repo="${INPUT_IMAGE_REPOSITORY}"
-        local image_tag="${INPUT_IMAGE_TAG:-latest}"
+    # Simplified priority logic:
+    # 1. If INPUT_IMAGE_REPOSITORY is provided: use it with tag or 'latest'
+    # 2. Else if INPUT_IMAGE_TAG is provided: use DEFAULT_IMAGE_REPOSITORY with SHA lookup
+    # 3. Else: use DEFAULT_IMAGE from config
 
-        # Custom repositories don't have SHA pinning
-        IMAGE_TO_USE="${image_repo}:${image_tag}"
+    if [[ -n "${INPUT_IMAGE_REPOSITORY:-}" ]]; then
+        # User specified custom repository - use it with tag or 'latest'
+        # No SHA pinning for custom repositories
+        local image_tag="${INPUT_IMAGE_TAG:-latest}"
+        IMAGE_TO_USE="${INPUT_IMAGE_REPOSITORY}:${image_tag}"
         log_info "Using custom Docker image: ${IMAGE_TO_USE}"
 
     elif [[ -n "${INPUT_IMAGE_TAG:-}" ]]; then
-        # User wants a specific tag from the default repository
+        # User specified tag only - use DEFAULT_IMAGE_REPOSITORY with SHA lookup
         local image_tag="${INPUT_IMAGE_TAG}"
 
         # Try to find SHA for this tag in our config
         case "${image_tag}" in
-            latest|*-minimal|*-mermaid|*-plantuml)
+            latest|*-minimal|*-mermaid|*-plantuml|"${DEFAULT_IMAGE_VERSION}")
                 # Extract variant name
                 local variant_name="${image_tag//latest/all}"
+                variant_name="${variant_name//${DEFAULT_IMAGE_VERSION}/all}"
                 variant_name="${variant_name#*-}"
                 [[ "$variant_name" == "all" ]] && variant_name="all"
 
@@ -198,7 +208,7 @@ function determine_image() {
                 ;;
         esac
     else
-        # Use default from config (with SHA pinning)
+        # No overrides - use DEFAULT_IMAGE from config (with SHA pinning)
         IMAGE_TO_USE="${DEFAULT_IMAGE}"
         log_info "Using default SHA-pinned image: ${IMAGE_TO_USE}"
     fi
@@ -293,5 +303,7 @@ function main() {
     execute_md2conf
 }
 
-# Run main function
-main
+# Run main function only if script is executed directly (not sourced)
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    main
+fi
