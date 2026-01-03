@@ -56,7 +56,7 @@ inputs:
 
   # Rendering Settings
   render_drawio:
-    description: 'Render draw.io diagrams as images. Requires draw.io utility (not included in base image).'
+    description: 'Render draw.io diagrams as images. Requires custom image with draw.io utility.'
     required: false
     default: 'false'
   render_mermaid:
