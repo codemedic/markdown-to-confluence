@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v*.*.*'
+      - '!v*-*' # Exclude tags with hyphens (pre-releases; e.g., v1.0.0-beta, v2.1.0-rc1)
 
 jobs:
   tag-alias:
