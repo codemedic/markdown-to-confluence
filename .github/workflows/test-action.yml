@@ -7,6 +7,18 @@ on:
       - master
   pull_request:
   workflow_dispatch:
+    inputs:
+      image_repository:
+        description: 'Docker image repository to test'
+        required: false
+        default: 'leventehunyadi/md2conf'
+      image_tag:
+        description: 'Docker image tag to test (leave empty for pinned version)'
+        required: false
+      alternative_config_enabled:
+        description: 'Use alternative image configuration'
+        type: boolean
+        default: false
 
 jobs:
   test-action:
@@ -20,25 +32,40 @@ jobs:
         if: github.event_name == 'pull_request'
         with:
           path: test/docs
-          image_repository: leventehunyadi/md2conf
-          image_tag: latest
           space: TEST
           api_key: dummy-key-for-testing
         continue-on-error: true
 
       - name: Run action (live test)
         uses: ./
-        if: github.event_name != 'pull_request' && vars.CONFLUENCE_SPACE_KEY != ''
+        if: github.event_name == 'push' && vars.CONFLUENCE_SPACE_KEY != ''
         with:
           path: test/docs
-          image_repository: leventehunyadi/md2conf
-          image_tag: latest
           domain: ${{ vars.CONFLUENCE_DOMAIN }}
           username: ${{ vars.CONFLUENCE_USER_NAME }}
           api_key: ${{ secrets.CONFLUENCE_API_KEY }}
           space: ${{ vars.CONFLUENCE_SPACE_KEY }}
           root_page_id: ${{ vars.CONFLUENCE_ROOT_PAGE_ID }}
           title_prefix: 'Action Test - '
+          keep_hierarchy: true
+          render_mermaid: true
+          render_plantuml: true
+          diagram_format: 'svg'
+
+      - name: Run action (manual test)
+        uses: ./
+        if: github.event_name == 'workflow_dispatch'
+        with:
+          path: test/docs
+          image_repository: ${{ github.event.inputs.image_repository }}
+          image_tag: ${{ github.event.inputs.image_tag }}
+          alternative_config_enabled: ${{ github.event.inputs.alternative_config_enabled }}
+          domain: ${{ vars.CONFLUENCE_DOMAIN }}
+          username: ${{ vars.CONFLUENCE_USER_NAME }}
+          api_key: ${{ secrets.CONFLUENCE_API_KEY }}
+          space: ${{ vars.CONFLUENCE_SPACE_KEY }}
+          root_page_id: ${{ vars.CONFLUENCE_ROOT_PAGE_ID }}
+          title_prefix: 'Manual Test - '
           keep_hierarchy: true
           render_mermaid: true
           render_plantuml: true
