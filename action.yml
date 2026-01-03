@@ -1,5 +1,5 @@
-name: 'md2conf Github Action'
-description: 'A Github Action to publish Markdown files to Confluence.'
+name: 'Markdown to Confluence'
+description: 'Publish Markdown files to Confluence with support for diagrams and formatting.'
 author: 'codemedic'
 
 branding:
