@@ -113,23 +113,19 @@ update_config() {
     local sha_mermaid="$6"
     local sha_plantuml="$7"
 
-    local timestamp
-    timestamp=$(date --utc +"%Y-%m-%d %H:%M:%S UTC")
-
     local template="${SCRIPT_DIR}/image-config.sh.template"
     if [[ ! -f "$template" ]]; then
         log_error "Template not found: ${template}"
         return 1
     fi
 
-    TIMESTAMP="$timestamp" \
     REPO="$repo" \
     VERSION="$version" \
     SHA_ALL="$sha_all" \
     SHA_MINIMAL="$sha_minimal" \
     SHA_MERMAID="$sha_mermaid" \
     SHA_PLANTUML="$sha_plantuml" \
-    envsubst '$TIMESTAMP,$REPO,$VERSION,$SHA_ALL,$SHA_MINIMAL,$SHA_MERMAID,$SHA_PLANTUML' \
+    envsubst '$REPO,$VERSION,$SHA_ALL,$SHA_MINIMAL,$SHA_MERMAID,$SHA_PLANTUML' \
         < "$template" > "$config_file"
 
     log_info "Updated ${config_file}"
