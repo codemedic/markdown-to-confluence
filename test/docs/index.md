@@ -1,4 +1,6 @@
-# Multi-User Todo App Documentation
+---
+title: "Multi-User Todo App Documentation"
+---
 
 Welcome to the Multi-User Todo App documentation. This application allows teams to collaboratively manage tasks with role-based access control.
 
