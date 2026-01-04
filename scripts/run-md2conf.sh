@@ -273,7 +273,7 @@ function execute_md2conf() {
     # Append md2conf arguments
     docker_args+=("${ARGS[@]}")
 
-    debug_log "Executing: docker run [${#docker_args[@]} args]"
+    debug_log "Executing: docker run ${docker_args[*]}"
 
     # Execute Docker
     docker run "${docker_args[@]}"
