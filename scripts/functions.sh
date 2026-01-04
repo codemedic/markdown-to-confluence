@@ -33,3 +33,18 @@ function usage() {
     # sed: removes the leading ## and optional space
     grep '^##' "$0" | sed 's/^##\s\?//'
 }
+
+# Function to validate binary dependencies
+function validate_dependencies() {
+    local missing=()
+    for cmd in "$@"; do
+        if ! command -v "$cmd" >/dev/null 2>&1; then
+            missing+=("$cmd")
+        fi
+    done
+
+    if [[ ${#missing[@]} -gt 0 ]]; then
+        log_error "Missing required dependencies: ${missing[*]}"
+        exit 1
+    fi
+}

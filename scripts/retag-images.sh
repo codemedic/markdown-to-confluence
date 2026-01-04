@@ -31,20 +31,6 @@ source "${SCRIPT_DIR}/image-config-alternative.sh"
 # Constants
 readonly REPO="${DEFAULT_IMAGE_REPOSITORY}"
 
-function validate_dependencies() {
-    local missing=()
-    for cmd in curl jq docker; do
-        if ! command -v "$cmd" >/dev/null 2>&1; then
-            missing+=("$cmd")
-        fi
-    done
-
-    if [[ ${#missing[@]} -gt 0 ]]; then
-        log_error "Missing required dependencies: ${missing[*]}"
-        exit 1
-    fi
-}
-
 function retag_images() {
     local old_prefix="$1"
     local new_version="$2"
@@ -131,7 +117,7 @@ main() {
         exit 1
     fi
 
-    validate_dependencies
+    validate_dependencies curl jq docker
     retag_images "$old_prefix" "$new_version"
 }
 

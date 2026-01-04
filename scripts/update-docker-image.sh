@@ -182,20 +182,7 @@ main() {
     version="${version#v}"
 
     # Check dependencies
-    if ! command -v docker &> /dev/null; then
-        log_error "Docker is required but not installed"
-        exit 1
-    fi
-
-    if ! command -v jq &> /dev/null; then
-        log_error "jq is required but not installed"
-        exit 1
-    fi
-
-    if ! command -v envsubst &> /dev/null; then
-        log_error "envsubst is required but not installed (usually part of gettext)"
-        exit 1
-    fi
+    validate_dependencies docker jq envsubst
 
     # Load current configuration to get repository and current major version
     if [[ -f "$config_file" ]]; then
