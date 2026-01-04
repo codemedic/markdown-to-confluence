@@ -15,7 +15,11 @@ on:
         description: 'Docker image tag to test (leave empty for pinned version)'
         required: false
       use_experimental_features:
-        description: 'Use alternative image configuration'
+        description: 'Use experimental features in the action (alternative docker image)'
+        type: boolean
+        default: false
+      debug:
+        description: 'Enable debug logging for the action'
         type: boolean
         default: false
 
@@ -58,6 +62,7 @@ jobs:
           path: test/docs
           image_repository: ${{ github.event.inputs.image_repository }}
           image_tag: ${{ github.event.inputs.image_tag }}
+          debug: ${{ github.event.inputs.debug }}
           use_experimental_features: ${{ github.event.inputs.use_experimental_features }}
           domain: ${{ vars.CONFLUENCE_DOMAIN }}
           username: ${{ vars.CONFLUENCE_USER_NAME }}
