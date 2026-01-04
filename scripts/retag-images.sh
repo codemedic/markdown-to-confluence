@@ -4,6 +4,10 @@ set -euo pipefail
 ## Script to re-tag and push Docker images from a forked repository.
 ## Useful for testing builds with different version tags.
 ##
+## This script uses the alternative configuration (image-config-alternative.sh)
+## to ensure developers have full control over the experimental/test images
+## without affecting the stable production configuration.
+##
 ## Usage:
 ##   ./retag-images.sh [options] <old-prefix-hash> <new-version>
 ##
@@ -20,8 +24,26 @@ readonly SCRIPT_DIR
 # shellcheck source=functions.sh
 source "${SCRIPT_DIR}/functions.sh"
 
+# Source image configuration
+# shellcheck source=image-config-alternative.sh
+source "${SCRIPT_DIR}/image-config-alternative.sh"
+
 # Constants
-readonly REPO="codemedic/md2conf"
+readonly REPO="${DEFAULT_IMAGE_REPOSITORY}"
+
+function validate_dependencies() {
+    local missing=()
+    for cmd in curl jq docker; do
+        if ! command -v "$cmd" >/dev/null 2>&1; then
+            missing+=("$cmd")
+        fi
+    done
+
+    if [[ ${#missing[@]} -gt 0 ]]; then
+        log_error "Missing required dependencies: ${missing[*]}"
+        exit 1
+    fi
+}
 
 function retag_images() {
     local old_prefix="$1"

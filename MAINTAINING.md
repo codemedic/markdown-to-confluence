@@ -88,7 +88,9 @@ To update the alternative configuration:
 
 ### Testing Fork Builds
 
-When testing builds from a fork (e.g., `codemedic/md2conf`), you might need to re-tag existing images with a new version for testing purposes. Use `scripts/retag-images.sh` to automate this:
+When testing builds from a fork (e.g., `codemedic/md2conf`), you might need to re-tag existing images with a new version for testing purposes. Use `scripts/retag-images.sh` to automate this.
+
+This script is designed to work exclusively with the alternative configuration (`scripts/image-config-alternative.sh`), giving developers full control over experimental or test images without risking changes to the stable production configuration.
 
 ```bash
 # Usage: ./scripts/retag-images.sh <old-prefix-hash> <new-version>
@@ -96,7 +98,7 @@ When testing builds from a fork (e.g., `codemedic/md2conf`), you might need to r
 ./scripts/retag-images.sh cd4d8cf 1.2.3
 ```
 
-This script pulls images from `codemedic/md2conf` matching the prefix, tags them with the new version, and pushes them back to the same repository.
+This script pulls images from the repository defined in `scripts/image-config-alternative.sh` matching the prefix, tags them with the new version, and pushes them back to the same repository.
 
 ### Dependencies
 

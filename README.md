@@ -76,6 +76,14 @@ jobs:
 
 **Note:** The action uses SHA-pinned images from the configuration file by default. You can override these with custom values if needed.
 
+### Experimental Features
+
+| Input | Description | Default |
+|-------|-------------|---------|
+| `use_experimental_features` | Enable experimental features and use `image-config-alternative.sh` | `false` |
+
+When `use_experimental_features` is set to `true`, the action loads image configurations from `scripts/image-config-alternative.sh` instead of the default. This allows developers to test custom builds with full control over the image repository and tags.
+
 ### Debugging
 
 | Input | Description | Default |
