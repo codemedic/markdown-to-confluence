@@ -129,18 +129,4 @@ jobs:
           use_experimental_features: ${{ inputs.use_experimental_features || false }}
           debug: ${{ inputs.debug || false }}
 
-  dry-run:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-
-      - name: Run action (dry-run mode)
-        uses: ./
-        with:
-          path: test/docs
-          space: TEST
-          api_key: dummy-key-for-testing
-        continue-on-error: true
 
