@@ -124,54 +124,12 @@ jobs:
           title_prefix: ${{ steps.vars.outputs.title_prefix }}
           generated_by: ${{ steps.vars.outputs.generated_by }}
           alignment: ${{ matrix.alignment }}
+          image_repository: ${{ github.event.inputs.image_repository }}
+          image_tag: ${{ github.event.inputs.image_tag }}
           use_experimental_features: ${{ inputs.use_experimental_features || false }}
           debug: ${{ inputs.debug || false }}
 
-  manual-test:
-    needs: setup
-    runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch'
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-
-      - name: Create Manual Test Root Page
-        id: manual_root
-        env:
-          DEBUG: ${{ inputs.debug == true && '1' || '0' }}
-        run: |
-          TITLE="Manual Test - ${{ github.run_id }}"
-          COMBO_ID=$(./scripts/confluence-utils.sh create-page \
-            "${{ vars.CONFLUENCE_DOMAIN }}" \
-            "${{ secrets.CONFLUENCE_API_KEY }}" \
-            "${{ needs.setup.outputs.space_id }}" \
-            "${{ needs.setup.outputs.root_page_id }}" \
-            "${TITLE}" \
-            "<p>Manual test execution with custom inputs.</p>" \
-            "${{ vars.CONFLUENCE_USER_NAME }}")
-          echo "manual_root_id=${COMBO_ID}" >> "$GITHUB_OUTPUT"
-
-      - name: Run action
-        uses: ./
-        with:
-          path: test/docs
-          image_repository: ${{ github.event.inputs.image_repository }}
-          image_tag: ${{ github.event.inputs.image_tag }}
-          debug: ${{ github.event.inputs.debug }}
-          use_experimental_features: ${{ github.event.inputs.use_experimental_features }}
-          domain: ${{ vars.CONFLUENCE_DOMAIN }}
-          username: ${{ vars.CONFLUENCE_USER_NAME }}
-          api_key: ${{ secrets.CONFLUENCE_API_KEY }}
-          space: ${{ vars.CONFLUENCE_SPACE_KEY }}
-          root_page_id: ${{ steps.manual_root.outputs.manual_root_id }}
-          title_prefix: 'Manual Test - '
-          keep_hierarchy: true
-          render_mermaid: true
-          render_plantuml: true
-          diagram_format: 'svg'
-
   dry-run:
-
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
